@@ -17,8 +17,6 @@ import net.mcft.copy.backpacks.config.SettingDouble;
 @SideOnly(Side.CLIENT)
 public class EntrySliderPercent extends EntryButton<Double> {
 	
-	private static final DecimalFormat _df = new DecimalFormat("0.##");
-	
 	public final Slider slider;
 	
 	public EntrySliderPercent(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<Double> setting) {
@@ -37,7 +35,6 @@ public class EntrySliderPercent extends EntryButton<Double> {
 	@Override
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
 	                      int mouseX, int mouseY, boolean isSelected) {
-		slider.displayString = _df.format(getValue() * 100) + "%";
 		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
 		value = slider.getValue();
 	}
@@ -45,6 +42,9 @@ public class EntrySliderPercent extends EntryButton<Double> {
 	// TODO: Don't repeat yourself. Somehow merge with EntrySlider?
 	public static class Slider extends GuiSlider {
 		
+		private static final DecimalFormat _df = new DecimalFormat("0.##");
+		
+		// TODO: Only supports 0 to 1 ranges properly atm.
 		public Slider(double min, double max) { super(0, 0, 0, 300, 18, "", "", min, max, min, false, false); }
 		
 		@Override
@@ -65,6 +65,12 @@ public class EntrySliderPercent extends EntryButton<Double> {
 			GlStateManager.color(v, v, v);
 			drawTexturedModalRect(x, yPosition, 0, 66, 4, 20);
 			drawTexturedModalRect(x + 4, yPosition, 196, 66, 4, 20);
+		}
+		
+		@Override
+		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+			displayString = _df.format(getValue() * 100) + "%";
+			super.drawButton(mc, mouseX, mouseY);
 		}
 		
 	}

@@ -181,6 +181,9 @@ public abstract class Setting<T> {
 	
 	/** Returns the setting's current entry value in the config GUI. */
 	private T getEntryValue() { return _entry.getValue(); }
+	/** Returns the setting's current entry instance in the config GUI. */
+	@SideOnly(Side.CLIENT)
+	public EntrySetting<T> getEntry() { return _entry; }
 	/** Sets the setting's current config entry in the config GUI to the specified entry.
 	 *  Used for disabling config entries dynamically based on which settings they require. */
 	@SideOnly(Side.CLIENT)
@@ -249,7 +252,7 @@ public abstract class Setting<T> {
 		
 		public boolean isDefault() { return Objects.equals(Setting.this.get(), Setting.this.getDefault()); }
 		public Object getDefault() { return Setting.this.getDefault(); }
-		public Object[] getDefaults() { return null; }
+		public Object[] getDefaults() { return new Object[0]; }
 		public void setToDefault() { set(Setting.this.getDefault()); }
 		
 		public boolean requiresWorldRestart() { return Setting.this.requiresWorldRejoin(); }

@@ -15,22 +15,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.config.EntryCategory;
 import net.mcft.copy.backpacks.client.config.EntrySetting;
+import net.mcft.copy.backpacks.client.config.list.EntryCategorySpawn;
 import net.mcft.copy.backpacks.config.Setting;
-import net.mcft.copy.backpacks.config.SettingSingleValue;
 
 @SideOnly(Side.CLIENT)
 public class BackpacksGuiConfig extends GuiConfig {
 	
 	public final String category;
 	
-	public BackpacksGuiConfig(GuiScreen parent) {
-		this(parent, Configuration.CATEGORY_GENERAL, WearableBackpacks.MOD_ID,
-		     false, false, WearableBackpacks.MOD_NAME, "");
-	}
-	public BackpacksGuiConfig(GuiScreen parentScreen, String category, String modID, 
-	                          boolean allRequireWorldRestart, boolean allRequireMcRestart,
-	                          String title, String titleLine2) {
-		super(parentScreen, Collections.emptyList(), modID,
+	public BackpacksGuiConfig(GuiScreen parentScreen)
+		{ this(parentScreen, Configuration.CATEGORY_GENERAL, WearableBackpacks.MOD_NAME, "", false, false); }
+	public BackpacksGuiConfig(GuiScreen parentScreen, String category, String title, String titleLine2,
+	                          boolean allRequireWorldRestart, boolean allRequireMcRestart) {
+		super(parentScreen, Collections.emptyList(), WearableBackpacks.MOD_ID,
 		      allRequireWorldRestart, allRequireMcRestart,
 		      title, titleLine2);
 		this.category = category;
@@ -64,16 +61,17 @@ public class BackpacksGuiConfig extends GuiConfig {
 			listEntries = new ArrayList<IConfigEntry>();
 			
 			for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(parent.category))
-				listEntries.add(EntrySetting.Create(owningScreen, this, (SettingSingleValue<?>)setting));
+				listEntries.add(EntrySetting.Create(owningScreen, this, setting));
 			
 			// If this is the general category, add category elements
 			// leading to config sub-screens for all other categories.
 			if (parent.category.equals(Configuration.CATEGORY_GENERAL))
-				for (String cat : WearableBackpacks.CONFIG.getCategoryNames())
-					if (!cat.equals(Configuration.CATEGORY_GENERAL))
-						listEntries.add(new EntryCategory(owningScreen, this, cat));
+				for (String cat : WearableBackpacks.CONFIG.getCategories())
+					listEntries.add((cat == "spawn") // FIXME: Don't do this, silly!
+						? new EntryCategorySpawn(owningScreen, this, cat) 
+						: new EntryCategory(owningScreen, this, cat));
 			
-			super.initGui();
+			initGui();
 		}
 		
 		private int getHeightForSlot(int slot) {

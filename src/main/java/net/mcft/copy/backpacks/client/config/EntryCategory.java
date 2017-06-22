@@ -20,58 +20,60 @@ public class EntryCategory extends ListEntryBase {
 	
 	public String category;
 	
-	private final GuiButtonExt _button;
-	private final BackpacksGuiConfig _childScreen;
+	protected final GuiButtonExt button;
+	protected final BackpacksGuiConfig childScreen;
 	
 	public EntryCategory(GuiConfig owningScreen, GuiConfigEntries owningEntryList, String category) {
 		super(owningScreen, owningEntryList, new ConfigElement(
-			WearableBackpacks.CONFIG.getCategory(category)
-				.setLanguageKey("config." + WearableBackpacks.MOD_ID + ".category." + category)));
+			WearableBackpacks.CONFIG.getCategory(category).setLanguageKey(
+				"config." + WearableBackpacks.MOD_ID + ".category." + category)));
 		this.category = category;
 		
-		_button = new GuiButtonExt(0, 0, 0, 300, 18, I18n.format(name));
-		tooltipHoverChecker = new HoverChecker(_button, 800);
+		button = new GuiButtonExt(0, 0, 0, 300, 18, I18n.format(name));
+		tooltipHoverChecker = new HoverChecker(button, 800);
 		drawLabel = false;
 		
-		_childScreen = new BackpacksGuiConfig(
-			owningScreen, this.category, owningScreen.modID,
+		childScreen = new BackpacksGuiConfig(
+			owningScreen, category, owningScreen.title,
+			((owningScreen.titleLine2 != null) ? owningScreen.titleLine2 : "") + " > " + name,
 			owningScreen.allRequireWorldRestart || configElement.requiresWorldRestart(),
-			owningScreen.allRequireMcRestart || configElement.requiresMcRestart(), owningScreen.title,
-			((owningScreen.titleLine2 != null) ? owningScreen.titleLine2 : "") + " > " + this.name);
+			owningScreen.allRequireMcRestart || configElement.requiresMcRestart());
 	}
 	
-	private List<IConfigEntry> getEntries() { return _childScreen.entryList.listEntries; }
+	private List<IConfigEntry> getEntries() { return childScreen.entryList.listEntries; }
 	
 	@Override
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
 	                      int mouseX, int mouseY, boolean isSelected) {
-		_button.xPosition = listWidth / 2 - 150;
-		_button.yPosition = y;
-		_button.enabled = enabled();
-		_button.drawButton(mc, mouseX, mouseY);
 		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+		
+		button.xPosition = listWidth / 2 - 150;
+		button.yPosition = y;
+		button.enabled = enabled();
+		button.drawButton(mc, mouseX, mouseY);
 	}
 	
 	@Override
 	public void drawToolTip(int mouseX, int mouseY) {
-		boolean canHover = mouseY < this.owningScreen.entryList.bottom && mouseY > this.owningScreen.entryList.top;
-		if (this.tooltipHoverChecker.checkHover(mouseX, mouseY, canHover))
-			this.owningScreen.drawToolTip(toolTip, mouseX, mouseY);
+		boolean canHover = ((mouseY < owningScreen.entryList.bottom) &&
+		                    (mouseY > owningScreen.entryList.top));
+		if (tooltipHoverChecker.checkHover(mouseX, mouseY, canHover))
+			owningScreen.drawToolTip(toolTip, mouseX, mouseY);
 		super.drawToolTip(mouseX, mouseY);
 	}
 	
 	@Override
 	public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY) {
-		if (!_button.mousePressed(this.mc, x, y))
+		if (!button.mousePressed(mc, x, y))
 			return super.mousePressed(index, x, y, mouseEvent, relativeX, relativeY);
-		_button.playPressSound(mc.getSoundHandler());
-		Minecraft.getMinecraft().displayGuiScreen(_childScreen);
+		button.playPressSound(mc.getSoundHandler());
+		Minecraft.getMinecraft().displayGuiScreen(childScreen);
 		return true;
 	}
 
 	@Override
 	public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY) {
-		_button.mouseReleased(x, y);
+		button.mouseReleased(x, y);
 	}
 	
 	@Override

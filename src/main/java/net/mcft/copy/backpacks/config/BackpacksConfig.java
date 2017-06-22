@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.config;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -22,6 +22,7 @@ import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.config.custom.SettingBackpackSize;
 import net.mcft.copy.backpacks.config.custom.SettingPercent;
+import net.mcft.copy.backpacks.config.custom.SettingSpawn;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageSyncSettings;
 
@@ -68,6 +69,17 @@ public class BackpacksConfig extends Configuration {
 		
 	}
 	
+	// ==[ SPAWN ]==
+	
+	public SpawnCategory spawn;
+	public class SpawnCategory {
+		
+		public final Setting<Boolean> enabled = new SettingBoolean(true);
+		
+		public final Setting<?> options = new SettingSpawn();
+		
+	}
+	
 	// ==[ COSMETIC ]==
 	
 	@SideOnly(Side.CLIENT)
@@ -83,6 +95,7 @@ public class BackpacksConfig extends Configuration {
 	
 	
 	private Map<String, Setting<?>> _settings = new LinkedHashMap<String, Setting<?>>();
+	private List<String> _categories = new ArrayList<String>();
 	
 	public BackpacksConfig(File file) {
 		super(file);
@@ -94,12 +107,12 @@ public class BackpacksConfig extends Configuration {
 		for (Field field : getClass().getFields()) {
 			if ((field.getDeclaringClass() != getClass()) ||
 			    !field.getType().getName().endsWith("Category")) continue;
+			String category = field.getName();
+			_categories.add(category);
 			try {
 				field.set(this, field.getType().getConstructors()[0].newInstance(this));
-				addSettingsFromClass(field.get(this), field.getName());
-			} catch (InstantiationException |
-			         InvocationTargetException |
-			         IllegalAccessException ex) { throw new RuntimeException(ex); }
+				addSettingsFromClass(field.get(this), category);
+			} catch (ReflectiveOperationException ex) { throw new RuntimeException(ex); }
 		}
 	}
 	
@@ -131,6 +144,9 @@ public class BackpacksConfig extends Configuration {
 			.filter(setting -> setting.getCategory().equals(category))
 			.collect(Collectors.toList());
 	}
+	
+	/** Returns a collection containing all categories, not including GENERAL. */
+	public Collection<String> getCategories() { return _categories; }
 	
 	
 	// Loading / saving / initializing

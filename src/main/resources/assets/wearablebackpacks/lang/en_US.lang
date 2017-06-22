@@ -37,6 +37,18 @@ config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
 config.wearablebackpacks.backpack.size=Storage Size
 config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect placed or equipped backpacks
 
+config.wearablebackpacks.category.spawn=Spawn Settings
+config.wearablebackpacks.category.spawn.tooltip=Controls settings regarding mobs spawning with backpacks
+config.wearablebackpacks.spawn.enabled=Enabled
+config.wearablebackpacks.spawn.enabled.tooltip=Controls whether mobs can randomly spawn with backpacks
+config.wearablebackpacks.spawn.options=Options
+config.wearablebackpacks.spawn.entry.chance=Chance
+config.wearablebackpacks.spawn.entry.chance.tooltip=One in X mobs will spawn with this backpack. 0 = disabled.
+config.wearablebackpacks.spawn.entry.backpack=Backpack
+config.wearablebackpacks.spawn.entry.backpack.tooltip=Backpack item to spawn on the mob.
+config.wearablebackpacks.spawn.entry.lootTable=Loot Table
+config.wearablebackpacks.spawn.entry.lootTable.tooltip=Loot table to use for generating the loot inside the backpack.
+
 config.wearablebackpacks.category.cosmetic=Cosmetic Settings
 config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
 config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
